@@ -14,17 +14,20 @@ namespace inTimePayServer.Controllers
         [HttpGet]
         public string payRequestHelp(string reqId)
         {
-            var ip = "jimmyMStation";//"172.16.144.70";
+            var ip = "jimmyMStation.local";//"172.16.144.70";
             var port = 6379;
 
-            using (var help = helpBase.init(ip, port))
+            using (var help = helpBase.init(ip, port,new TimeSpan(0,5,0)))
             {
                 var subItem = reqId;
                 var waitTime = 5000;
                 var res = help.inTimePaymentMethodHelp(subItem, waitTime, () =>
                 {
-                    var req = new PaymentServiceClient();
-                    var billRes = req.createBillHelp(new inTimeReqPara { ReqId = reqId });
+                    var billRes = new paymentEntity();
+                    using (var req = new PaymentServiceClient())
+                    {
+                        billRes = req.createBillHelp(new inTimeReqPara { ReqId = reqId });
+                    }
 
                     bool flag = false;
                     if (string.IsNullOrEmpty(billRes.BillNo))

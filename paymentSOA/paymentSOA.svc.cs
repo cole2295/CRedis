@@ -22,21 +22,33 @@ namespace paymentSOA
         {
             var billNoTmp = para.ReqId + DateTime.Now.Ticks;
             var res = new paymentEntity { BillNo = billNoTmp };
-            var req = new BankServiceClient();
+            
             var bankEnt = new bankEntity { PayId = billNoTmp };
             var t = Task.Factory.StartNew(() =>
                 {
-                    req.processPayment(bankEnt);
+                    using (var req = new BankServiceClient())
+                    {
+                        req.processPayment(bankEnt);
+                    }
                 }
                 );
 
-            var ip = "jimmyMStation";//"172.16.144.70";
+            var ip = "jimmyMStation.local";//"172.16.144.70";
             var port = 6379;
 
-            using (var help = helpBase.init(ip, port))
+            try
             {
-                var strTmp = JsonSerializer.SerializeToString(new { reqId = para.ReqId, billno = billNoTmp });
-                help.setnx(bankEnt.PayId, strTmp);
+                using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
+                {
+                    var strTmp = JsonSerializer.SerializeToString(new { reqId = para.ReqId, billno = billNoTmp });
+                    var ts = new TimeSpan(0, 5, 0);
+
+                    help.setnx(bankEnt.PayId, strTmp, ts);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
             t.Wait(100);
             return res;
@@ -45,10 +57,10 @@ namespace paymentSOA
 
         public void paymentResultHook(inTimeEntity payResult)
         {
-            var ip = "jimmyMStation";// "172.16.144.70";
+            var ip = "jimmyMStation.local";// "172.16.144.70";
             var port = 6379;
 
-            using (var help = helpBase.init(ip, port))
+            using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
             {
                 var strTmp = help.get(payResult.BankEnt.PayId);
                 var payInfoTmp = strTmp.FromJson<Dictionary<string, string>>();
@@ -80,19 +92,23 @@ namespace paymentSOA
         {
             var billNoTmp = para.ReqId + DateTime.Now.Ticks;
             var res = new paymentEntity { BillNo = billNoTmp };
-            var req = new BankServiceClient();
+            
             var bankEnt = new bankEntity { PayId = billNoTmp };
             var t = Task.Factory.StartNew(() =>
             {
-                req.processPaymentHelp(bankEnt);
-            }
-                );
+                using (var req = new BankServiceClient())
+                {
+                    req.processPaymentHelp(bankEnt);
+                }
+            });
 
-            var ip = "jimmyMStation";//"172.16.144.70";
+            var ip = "jimmyMStation.local";//"172.16.144.70";
             var port = 6379;
-            using (var help = helpBase.init(ip, port))
+            using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
             {
-                help.setnx(bankEnt.PayId, para.ReqId);
+                var ts = new TimeSpan(0, 5, 0);
+
+                help.setnx(bankEnt.PayId, para.ReqId, ts);
             }
 
             t.Wait(100);
@@ -101,10 +117,10 @@ namespace paymentSOA
 
         public void paymentResultHookHelp(inTimeEntity payResult)
         {
-            var ip = "jimmyMStation";// "172.16.144.70";
+            var ip = "jimmyMStation.local";// "172.16.144.70";
             var port = 6379;
 
-            using (var help = helpBase.init(ip, port))
+            using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
             {
                 var subItem = help.get(payResult.BankEnt.PayId);;
                 var waitTime = 5000;

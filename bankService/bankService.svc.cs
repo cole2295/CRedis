@@ -17,13 +17,14 @@ namespace bankService
     {
         public void processPayment(bankEntity bankEntity)
         {
-            var req = new PaymentServiceClient();
             Thread.Sleep(2000);
             var res = new inTimeEntity { PaymentResult = "ok", BankEnt = new paymentService.bankEntity { PayId = bankEntity.PayId } };
             var t = Task.Factory.StartNew(() =>
             {
-                req.paymentResultHook(res);
-
+                using (var req = new PaymentServiceClient())
+                {
+                    req.paymentResultHook(res);
+                }
             });
 
             t.Wait(100);
@@ -35,12 +36,14 @@ namespace bankService
 
         public void processPaymentHelp(bankEntity bankEntity)
         {
-            var req = new PaymentServiceClient();
             Thread.Sleep(2000);
             var res = new inTimeEntity { PaymentResult = "ok", BankEnt = new paymentService.bankEntity { PayId = bankEntity.PayId } };
             var t = Task.Factory.StartNew(() =>
             {
-                req.paymentResultHookHelp(res);
+                using (var req = new PaymentServiceClient())
+                {
+                    req.paymentResultHookHelp(res);
+                }
 
             });
 
