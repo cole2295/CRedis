@@ -5,10 +5,6 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "redisTest", "redisTest\redisTest.csproj", "{64B61420-2125-4436-B64F-43547AA3E5EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "redisPubTest", "redisPubTest\redisPubTest.csproj", "{201B1383-DB1F-4FBA-95C2-ECBAC7CB5BC0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "setnxTest", "setnxTest\setnxTest.csproj", "{8126266E-0228-4DB7-9C0B-FE2CCE096703}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "inTimePayServer", "inTimePayServer\inTimePayServer.csproj", "{509914B0-4F26-434C-A9E3-0D4B46722021}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0300F3B4-6DAE-494F-85C8-D1DB982E2595} = {0300F3B4-6DAE-494F-85C8-D1DB982E2595}
@@ -33,14 +29,6 @@ Global
 		{64B61420-2125-4436-B64F-43547AA3E5EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64B61420-2125-4436-B64F-43547AA3E5EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64B61420-2125-4436-B64F-43547AA3E5EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{201B1383-DB1F-4FBA-95C2-ECBAC7CB5BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{201B1383-DB1F-4FBA-95C2-ECBAC7CB5BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{201B1383-DB1F-4FBA-95C2-ECBAC7CB5BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{201B1383-DB1F-4FBA-95C2-ECBAC7CB5BC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8126266E-0228-4DB7-9C0B-FE2CCE096703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8126266E-0228-4DB7-9C0B-FE2CCE096703}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8126266E-0228-4DB7-9C0B-FE2CCE096703}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8126266E-0228-4DB7-9C0B-FE2CCE096703}.Release|Any CPU.Build.0 = Release|Any CPU
 		{509914B0-4F26-434C-A9E3-0D4B46722021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{509914B0-4F26-434C-A9E3-0D4B46722021}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{509914B0-4F26-434C-A9E3-0D4B46722021}.Release|Any CPU.ActiveCfg = Release|Any CPU
