@@ -33,7 +33,7 @@ namespace paymentSOA
                 }
                 );
 
-            var ip = "jimmyMStation.local";//"172.16.144.70";
+            var ip = "jimmyMStation";//"172.16.144.70";
             var port = 6379;
 
             try
@@ -57,7 +57,7 @@ namespace paymentSOA
 
         public void paymentResultHook(inTimeEntity payResult)
         {
-            var ip = "jimmyMStation.local";// "172.16.144.70";
+            var ip = "jimmyMStation";// "172.16.144.70";
             var port = 6379;
 
             using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
@@ -102,7 +102,7 @@ namespace paymentSOA
                 }
             });
 
-            var ip = "jimmyMStation.local";//"172.16.144.70";
+            var ip = "jimmyMStation";//"172.16.144.70";
             var port = 6379;
             using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
             {
@@ -117,7 +117,7 @@ namespace paymentSOA
 
         public void paymentResultHookHelp(inTimeEntity payResult)
         {
-            var ip = "jimmyMStation.local";// "172.16.144.70";
+            var ip = "jimmyMStation";// "172.16.144.70";
             var port = 6379;
 
             using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))

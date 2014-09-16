@@ -15,7 +15,7 @@ namespace inTimePayServer.Controllers
         [HttpGet]
         public string payRequest(string reqId)
         {
-            var ip = "jimmyMStation.local";//"172.16.144.70";
+            var ip = "jimmyMStation";//"172.16.144.70";
             var port = 6379;
 
             using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
