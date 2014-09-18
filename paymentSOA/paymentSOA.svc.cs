@@ -43,7 +43,7 @@ namespace paymentSOA
                     var strTmp = JsonSerializer.SerializeToString(new { reqId = para.ReqId, billno = billNoTmp });
                     var ts = new TimeSpan(0, 5, 0);
 
-                    help.setnx(bankEnt.PayId, strTmp, ts);
+                    help.set(bankEnt.PayId, strTmp, ts);
                 }
             }
             catch (Exception e)
@@ -64,25 +64,33 @@ namespace paymentSOA
             {
                 var strTmp = help.get(payResult.BankEnt.PayId);
                 var payInfoTmp = strTmp.FromJson<Dictionary<string, string>>();
-                var subItem = payInfoTmp["billno"];
-                var waitTime = 5000;
-                var t = help.subscriberInTime(subItem, waitTime);
+                //var subItem = payInfoTmp["billno"];
+                //var waitTime = 5000;
+                //var t = help.subscriberInTime(subItem, waitTime);
 
                 var pubItem = payInfoTmp["reqId"];
                 var pubValue = payResult.PaymentResult;
 
-                help.publish(pubItem, pubValue);
+                var subNum = help.publish(pubItem, pubValue);
 
-                var methodRes = t.Result;
-                var syncStr = "sync";
-                if (syncStr.Equals(methodRes))
+                //var methodRes = t.Result;
+                if (subNum > 0)
                 {
-                    //goAsync
+                    //go selfMehod
                 }
                 else
                 {
-                    //go methodRes
+                    //go async
                 }
+                //var syncStr = "sync";
+                //if (subNum > 0)
+                //{
+                //    //go sync
+                //}
+                //else
+                //{
+                //    //go async
+                //}
 
 
             }
@@ -108,7 +116,7 @@ namespace paymentSOA
             {
                 var ts = new TimeSpan(0, 5, 0);
 
-                help.setnx(bankEnt.PayId, para.ReqId, ts);
+                help.set(bankEnt.PayId, para.ReqId, ts);
             }
 
             t.Wait(100);
@@ -123,24 +131,24 @@ namespace paymentSOA
             using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
             {
                 var subItem = help.get(payResult.BankEnt.PayId);;
-                var waitTime = 5000;
-                var res = help.inTimePaymentResultHelp(subItem, payResult.PaymentResult, waitTime, () =>
-                {
-                    return true;
-                });
-
+                //var waitTime = 5000;
+                //var res = help.inTimePaymentResultHelp(subItem, payResult.PaymentResult, waitTime, () =>
+                //{
+                //    return true;
+                //});
+                var res = help.inTimePaymentResultHelp(subItem, payResult.PaymentResult, payMethod.sync);
 
                 //return res;
 
                 var methodRes = res;
-                var syncStr = "sync";
-                if (syncStr.Equals(methodRes))
+                //var syncStr = "sync";
+                if (payMethod.sync.Equals(methodRes))
                 {
-                    //goAsync
+                    //go sync
                 }
                 else
                 {
-                    //go methodRes
+                    //go async
                 }
 
 

@@ -1,20 +1,23 @@
 ﻿using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ServiceStack.Text;
-using ServiceStack;
 
 namespace ctripRedisHelp
 {
+    public enum payMethod
+    {
+        sync,
+        async
+    }
+
     public class helpBase:IDisposable
     {
         static ConnectionMultiplexer redis;// = ConnectionMultiplexer.Connect("172.16.144.70");
         private string pubValue = string.Empty;
         private TimeSpan expiryTime = new TimeSpan(1);
+
+        
 
         public static helpBase init(string ip, int port,TimeSpan ts)
         {
@@ -48,9 +51,16 @@ namespace ctripRedisHelp
                     { ip, port }
                 }
             };
+            //ConnectionMultiplexer
             redis = ConnectionMultiplexer.Connect(config);
 
             this.expiryTime = ts;
+        }
+
+        public void set(string key, string value, TimeSpan ts)
+        {
+            var db = redis.GetDatabase();
+            db.StringSet(key, value, expiry: ts);
         }
 
         public void setnx(string key,string value,TimeSpan ts)
@@ -72,107 +82,142 @@ namespace ctripRedisHelp
             var t = Task.Factory.StartNew<string>(() =>
             {
 
-                return subscribeSelfFilter(SubscribeItem, timeOut, (ele) => true);
+                return subscribeSelfFilter(SubscribeItem, timeOut);
             });
             return t;
         }
 
-        public void publish(string publishItem,string value)
+        public long publishAndSet(string publishItem,string value)
         {
             this.pubValue = value;
             
-            redis.GetDatabase().StringSet(publishItem, value, expiry:expiryTime, flags: CommandFlags.FireAndForget);
-            redis.GetDatabase().Publish(publishItem,value);
+            var setFlag = redis.GetDatabase().StringSet(publishItem, value, expiry:expiryTime, flags: CommandFlags.FireAndForget);
+            var rClientNum = redis.GetDatabase().Publish(publishItem,value);
+            return rClientNum;
+        }
+
+        public long publish(string publishItem, string value)
+        {
+            var rClientNum = redis.GetDatabase().Publish(publishItem, value);
+            return rClientNum;
         }
 
 
-        private string subscribeSelfFilter(string SubscribeItem, int timeOut, Func<RedisValue, bool> filter)
+        private string subscribeSelfFilter(string SubscribeItem, int timeOut)
         {
+            AutoResetEvent autoEvent = new AutoResetEvent(false);
             var sub = redis.GetSubscriber();
             Console.WriteLine("client is waitting");
             var res = string.Empty;
-            var t = Thread.CurrentThread;
-            var flag = true;
-            
-            sub.Subscribe(SubscribeItem, (channel, message) =>
+            //var t = Thread.CurrentThread;
+            //var flag = true;
+            //Task realT = null;
+            sub.SubscribeAsync(SubscribeItem, (channel, message) =>
             {
-                if (flag && filter(message))
-                {
-                    sub.Unsubscribe(SubscribeItem);
-                    Console.WriteLine(message);
-                    res = message.ToString();
-                    //res = "evil";
-                    t.Interrupt();
-                }
-
+                //sub.Unsubscribe(SubscribeItem);
+                Console.WriteLine(message);
+                res = message.ToString();
+                //res = "evil";
+                //t.Interrupt();
+                autoEvent.Set();
             });
 
-            try
+
+            autoEvent.WaitOne(timeOut);
+            //Thread.Sleep(timeOut);
+            //flag = false;
+            Console.WriteLine("timeout");
+
+            sub.Unsubscribe(SubscribeItem);
+            //if(realT != null)
+            //{
+            //    realT.Wait();
+            //}
+
+            //sub.Unsubscribe(SubscribeItem);
+
+
+
+            return res;
+
+        }
+
+        public string inTimePaymentMethodHelp(string reqId, int timeout, Func<bool> act)
+        {
+            //var t = Task.Factory.StartNew<string>(() =>
+            //{
+            //    return subscribeSelfFilter(reqId, timeout, (ele) => !ele.Equals(pubValue));
+            //});
+            AutoResetEvent autoEvent = new AutoResetEvent(false);
+
+            var sub = redis.GetSubscriber();
+            Console.WriteLine("client is waitting");
+            var res = string.Empty;
+            //var t = Thread.CurrentThread;
+            //Task realT = null;
+            sub.SubscribeAsync(reqId, (channel, message) =>
             {
-                Thread.Sleep(timeOut);
-                flag = false;
+                //sub.Unsubscribe(SubscribeItem);
+                Console.WriteLine(message);
+                res = message.ToString();
+                autoEvent.Set();
+                //res = "evil";
+                //t.Interrupt();
+            });
+
+            //var resultTmp = this.get(reqId);
+
+            var flag = act();
+            if (flag)
+            {   
+                //Thread.Sleep(timeout);
+                autoEvent.WaitOne(timeout);
+                //flag = false;
                 Console.WriteLine("timeout");
-                sub.Unsubscribe(SubscribeItem);
-            }
-            catch (ThreadInterruptedException)
-            {
-                Console.WriteLine("arrive in time");
-            }
-
-            return res;
-
-        }
-
-        public string inTimePaymentMethodHelp(string reqId,int timeout,Func<bool> act)
-        {
-            var t = Task.Factory.StartNew<string>(() =>
-            {
-                return subscribeSelfFilter(reqId, timeout, (ele) => !ele.Equals(pubValue));
-            });
-
-            var flag = act();
-            var res = string.Empty;
-            if (flag)
-            {
-                res = t.Result;
-                var pubValue = string.Empty;
-                if (string.IsNullOrEmpty(res))
-                {
-                    pubValue = "async";
-                }
-                else
-                {
-                    pubValue = "sync";
-                }
-
-                publish(reqId, pubValue);
-            }else
-            {
-               
-            }
-            return res;
-        }
-
-        public string inTimePaymentResultHelp(string reqId, string payResult, int timeOut, Func<bool> act)
-        {
-            var t = Task.Factory.StartNew<string>(() =>
-            {
-                return subscribeSelfFilter(reqId, timeOut, (ele) => !ele.Equals(pubValue));
-            });
-            pubValue = payResult;
-            publish(reqId, pubValue);
-
-            var flag = act();
-            var res = string.Empty;
-            if (flag)
-            {
-                res = t.Result;
+                //res = t.Result;
             }
             else
             {
-                
+               
             }
+
+            sub.Unsubscribe(reqId);
+                
             return res;
+        }
+
+        public payMethod inTimePaymentResultHelp(string reqId, string payResult, payMethod syncOrNot)
+        {
+           
+            //var t = Task.Factory.StartNew<string>(() =>
+            //{
+            //    return subscribeSelfFilter(reqId, timeOut, (ele) => !ele.Equals(pubValue));
+            //});
+            //act();
+
+            //pubValue = JsonSerializer.SerializeToString(new { result = payResult, payMethod = syncOrNot });
+            var subNum = publish(reqId, payResult);
+
+            if (subNum > 0)
+            {
+                return syncOrNot;
+            }
+            else
+            {
+                return payMethod.async;
+            }
+
+            //var flag = act();
+            //var res = string.Empty;
+            //if (flag)
+            //{
+            //    res = t.Result;
+            //}
+            //else
+            //{
+                
+            //}
+            //return res;
         }
 
         public void Dispose()

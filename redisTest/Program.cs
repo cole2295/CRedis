@@ -15,41 +15,101 @@ namespace redisTest
         {
             //not sugested
             //var popRes = brpop(redis);
-            var ip = "172.16.144.70";
+            var ip = "jimmyMStation";
             var port = 6379;
 
-            using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
+            ConfigurationOptions config = new ConfigurationOptions
             {
-                var ts = new TimeSpan(0, 5, 0);
-
-                help.setnx("aab", "cc", ts);
-                var b = help.get("aab");
-
-                var subItem = "message";
-                var waitTime = 5000;
-                var t = help.subscriberInTime(subItem, waitTime);
-
+                EndPoints =
+                {
+                    { ip, port }
+                }
+            };
+            //ConnectionMultiplexer
+               var subItem = "message";
+                var waitTime = 1000;
+                
+            var redis = ConnectionMultiplexer.Connect(config);
+            var t = subscribeSelfFilter(redis, subItem, waitTime, (e) => true);
+            
+               //var r = redi help.publish(subItem, "aa");
+                
                 //request paymentSOA
-                var res = t.Result;
+                var res = t;
 
-                var pubItem = "payMethod";
-                var pubValue = string.Empty;
-                //Thread.Sleep(30000);    
-                if (string.IsNullOrEmpty(res))
-                {
-                    pubValue = "async";
-                }
-                else
-                {
-                    pubValue = "sync";
-                }
+                //var pubItem = "payMethod";
+                //var pubValue = string.Empty;
+                ////Thread.Sleep(30000);    
+                //if (string.IsNullOrEmpty(res))
+                //{
+                //    pubValue = "async";
+                //}
+                //else
+                //{
+                //    pubValue = "sync";
+                //}
 
-                help.publish(pubItem, pubValue);
-            }
+                //help.publish(pubItem, pubValue);
+            
             //Thread.Sleep(2);
             //Console.ReadLine(); 
             
             Console.ReadLine();
+        }
+
+        static string subscribeSelfFilter(ConnectionMultiplexer redis, string SubscribeItem, int timeOut, Func<RedisValue, bool> filter)
+        {
+            AutoResetEvent autoEvent = new AutoResetEvent(false);
+
+            
+            var sub = redis.GetSubscriber();
+            Console.WriteLine("client is waitting");
+            var res = string.Empty;
+            var t = Thread.CurrentThread;
+            
+            var flag = true;
+            var tt2 = DateTime.MinValue.Ticks;
+            var tt1 = DateTime.MaxValue.Ticks;
+            //Task realT = null;
+            sub.SubscribeAsync(SubscribeItem, (channel, message) =>
+            {
+                if (flag && filter(message))
+                {
+                    //sub.Unsubscribe(SubscribeItem);
+                    Console.WriteLine(message);
+                    res = message.ToString();
+                    //res = "evil";
+                    autoEvent.Set();
+                }
+                tt2 = DateTime.Now.Ticks;
+                Console.WriteLine("processTime:" + (tt2 - tt1));
+            });
+
+           
+                //flag = false;
+                Console.WriteLine("timeout");
+                autoEvent.WaitOne(1);
+                //Thread.Sleep(timeOut);
+
+                tt1 = DateTime.Now.Ticks;
+                //sub.Publish(SubscribeItem, "aa");
+                 sub.UnsubscribeAllAsyncBefore().Wait();
+                 Console.WriteLine("res:" + res);
+                 var tt3 = DateTime.Now.Ticks;
+                 Console.WriteLine("pubTime:" + (tt3 - tt1));
+                 //Thread.Sleep(500);
+                //redis.Close(false);
+                //if(realT != null)
+                //{
+                //    realT.Wait();
+                //}
+
+                //sub.Unsubscribe(SubscribeItem);
+
+            
+
+            return res;
+
         }
     }
 }
