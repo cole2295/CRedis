@@ -38,9 +38,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.2.1409.1722\lib\net40\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\StackExchange.Redis.1.0.333\lib\net45\StackExchange.Redis.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Net" />
@@ -65,12 +72,21 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Controllers\inTimePayControllerHelpControllerTests.cs" />
+    <Compile Include="helpBaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ctripRedisHelp\ctripRedisHelp.csproj">
+      <Project>{87622DD4-A63C-4E7B-B7AF-6650CF4521FF}</Project>
+      <Name>ctripRedisHelp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
