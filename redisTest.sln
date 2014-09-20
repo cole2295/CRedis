@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "inTimePayment.Tests", "inTi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTimeTestSuit", "InTimeTestSuit\InTimeTestSuit.csproj", "{446F0905-189A-4E9B-BD73-4C09EE79188A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "inTimePaymentForSoa", "inTimePaymentForSoa\inTimePaymentForSoa.csproj", "{3AD6C0FD-85A9-47B0-A59C-E5E22402368F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "inTimePaymentForService", "inTimePaymentForService\inTimePaymentForService.csproj", "{95557771-EFA7-47EF-871B-746D8E8188BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +50,14 @@ Global
 		{446F0905-189A-4E9B-BD73-4C09EE79188A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{446F0905-189A-4E9B-BD73-4C09EE79188A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{446F0905-189A-4E9B-BD73-4C09EE79188A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AD6C0FD-85A9-47B0-A59C-E5E22402368F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AD6C0FD-85A9-47B0-A59C-E5E22402368F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AD6C0FD-85A9-47B0-A59C-E5E22402368F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AD6C0FD-85A9-47B0-A59C-E5E22402368F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95557771-EFA7-47EF-871B-746D8E8188BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95557771-EFA7-47EF-871B-746D8E8188BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95557771-EFA7-47EF-871B-746D8E8188BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95557771-EFA7-47EF-871B-746D8E8188BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

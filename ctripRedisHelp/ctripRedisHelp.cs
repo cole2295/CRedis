@@ -17,7 +17,10 @@ namespace ctripRedisHelp
         private string pubValue = string.Empty;
         private TimeSpan expiryTime = new TimeSpan(1);
 
-        
+        public ISubscriber getSubscriber()
+        {
+            return redis.GetSubscriber();
+        }
 
         public static helpBase init(string ip, int port,TimeSpan ts)
         {
