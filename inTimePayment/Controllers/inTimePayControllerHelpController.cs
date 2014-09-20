@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Web.Http;
 using ServiceStack;
 using ServiceStack.Text;
+using inTimePaymentForService;
 
 namespace inTimePayment.Controllers
 {
@@ -20,8 +21,7 @@ namespace inTimePayment.Controllers
             var res = string.Empty;
             using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
             {
-                var subItem = reqId;
-                res = help.inTimePaymentMethodHelp(subItem, waitTime, () =>
+                res = help.inTimePaymentMethodHelp(reqId, waitTime, () =>
                 {
                     var billRes = req(method, processTime, result);
                     //using (var req = new PaymentServiceClient())

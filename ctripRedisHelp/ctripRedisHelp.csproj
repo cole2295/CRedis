@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ctripRedisHelp.cs" />
-    <Compile Include="ctripRedisHelpBase.cs" />
     <Compile Include="inTimeMethedEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

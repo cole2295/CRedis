@@ -145,83 +145,83 @@ namespace ctripRedisHelp
 
         }
 
-        public string inTimePaymentMethodHelp(string reqId, int timeout, Func<bool> act)
-        {
-            //var t = Task.Factory.StartNew<string>(() =>
-            //{
-            //    return subscribeSelfFilter(reqId, timeout, (ele) => !ele.Equals(pubValue));
-            //});
-            AutoResetEvent autoEvent = new AutoResetEvent(false);
+        //public string inTimePaymentMethodHelp(string reqId, int timeout, Func<bool> act)
+        //{
+        //    //var t = Task.Factory.StartNew<string>(() =>
+        //    //{
+        //    //    return subscribeSelfFilter(reqId, timeout, (ele) => !ele.Equals(pubValue));
+        //    //});
+        //    AutoResetEvent autoEvent = new AutoResetEvent(false);
 
-            var sub = redis.GetSubscriber();
-            Console.WriteLine("client is waitting");
-            var res = string.Empty;
-            //var t = Thread.CurrentThread;
-            //Task realT = null;
-            sub.SubscribeAsync(reqId, (channel, message) =>
-            {
-                //sub.Unsubscribe(SubscribeItem);
-                Console.WriteLine(message);
-                res = message.ToString();
-                autoEvent.Set();
-                //res = "evil";
-                //t.Interrupt();
-            });
+        //    var sub = redis.GetSubscriber();
+        //    Console.WriteLine("client is waitting");
+        //    var res = string.Empty;
+        //    //var t = Thread.CurrentThread;
+        //    //Task realT = null;
+        //    sub.SubscribeAsync(reqId, (channel, message) =>
+        //    {
+        //        //sub.Unsubscribe(SubscribeItem);
+        //        Console.WriteLine(message);
+        //        res = message.ToString();
+        //        autoEvent.Set();
+        //        //res = "evil";
+        //        //t.Interrupt();
+        //    });
 
-            //var resultTmp = this.get(reqId);
+        //    //var resultTmp = this.get(reqId);
 
-            var flag = act();
-            if (flag)
-            {   
-                //Thread.Sleep(timeout);
-                autoEvent.WaitOne(timeout);
-                //flag = false;
-                Console.WriteLine("timeout");
-                //res = t.Result;
-            }
-            else
-            {
+        //    var flag = act();
+        //    if (flag)
+        //    {   
+        //        //Thread.Sleep(timeout);
+        //        autoEvent.WaitOne(timeout);
+        //        //flag = false;
+        //        Console.WriteLine("timeout");
+        //        //res = t.Result;
+        //    }
+        //    else
+        //    {
                
-            }
+        //    }
 
-            sub.Unsubscribe(reqId);
+        //    sub.Unsubscribe(reqId);
                 
-            return res;
-        }
+        //    return res;
+        //}
 
-        public payMethod inTimePaymentResultHelp(string reqId, string payResult, payMethod syncOrNot)
-        {
+        //public payMethod inTimePaymentResultHelp(string reqId, string payResult, payMethod syncOrNot)
+        //{
            
-            //var t = Task.Factory.StartNew<string>(() =>
-            //{
-            //    return subscribeSelfFilter(reqId, timeOut, (ele) => !ele.Equals(pubValue));
-            //});
-            //act();
+        //    //var t = Task.Factory.StartNew<string>(() =>
+        //    //{
+        //    //    return subscribeSelfFilter(reqId, timeOut, (ele) => !ele.Equals(pubValue));
+        //    //});
+        //    //act();
 
-            //pubValue = JsonSerializer.SerializeToString(new { result = payResult, payMethod = syncOrNot });
-            var subNum = publish(reqId, payResult);
+        //    //pubValue = JsonSerializer.SerializeToString(new { result = payResult, payMethod = syncOrNot });
+        //    var subNum = publish(reqId, payResult);
 
-            if (subNum > 0)
-            {
-                return syncOrNot;
-            }
-            else
-            {
-                return payMethod.async;
-            }
+        //    if (subNum > 0)
+        //    {
+        //        return syncOrNot;
+        //    }
+        //    else
+        //    {
+        //        return payMethod.async;
+        //    }
 
-            //var flag = act();
-            //var res = string.Empty;
-            //if (flag)
-            //{
-            //    res = t.Result;
-            //}
-            //else
-            //{
+        //    //var flag = act();
+        //    //var res = string.Empty;
+        //    //if (flag)
+        //    //{
+        //    //    res = t.Result;
+        //    //}
+        //    //else
+        //    //{
                 
-            //}
-            //return res;
-        }
+        //    //}
+        //    //return res;
+        //}
 
         public void Dispose()
         {

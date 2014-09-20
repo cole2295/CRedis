@@ -292,6 +292,14 @@
       <Project>{87622dd4-a63c-4e7b-b7af-6650cf4521ff}</Project>
       <Name>ctripRedisHelp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\inTimePaymentForService\inTimePaymentForService.csproj">
+      <Project>{95557771-efa7-47ef-871b-746d8e8188bf}</Project>
+      <Name>inTimePaymentForService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\inTimePaymentForSoa\inTimePaymentForSoa.csproj">
+      <Project>{3ad6c0fd-85a9-47b0-a59c-e5e22402368f}</Project>
+      <Name>inTimePaymentForSoa</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

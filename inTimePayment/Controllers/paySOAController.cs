@@ -8,6 +8,7 @@ using System.Web.Http;
 using ServiceStack;
 using ServiceStack.Text;
 using System.Threading.Tasks;
+using inTimePaymentForSoa;
 
 namespace inTimePayment.Controllers
 {
