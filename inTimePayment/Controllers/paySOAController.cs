@@ -42,7 +42,7 @@ namespace inTimePayment.Controllers
     }
 
     [RoutePrefix("api/paySOA")]
-    public class paySOAController : ApiController
+    public class paySOAController : ApiController, inTimePayment.Controllers.IpaySOAController
     {
         [Route("createBillHelpForTest")]
         [HttpPost]

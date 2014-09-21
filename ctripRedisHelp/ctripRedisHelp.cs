@@ -11,12 +11,21 @@ namespace ctripRedisHelp
         async
     }
 
-    public class helpBase:IDisposable
+    public class helpBase : IDisposable, ctripRedisHelp.IhelpBase
     {
         static ConnectionMultiplexer redis;// = ConnectionMultiplexer.Connect("172.16.144.70");
         private string pubValue = string.Empty;
         private TimeSpan expiryTime = new TimeSpan(1);
+        private string inValue = string.Empty;
+        private AutoResetEvent autoEvent = new AutoResetEvent(false);
         
+
+        public string InValue
+        {
+            get { return inValue; }
+            set {  }
+        }
+
         public bool IsConnected
         {
             get { return redis.IsConnected; }
@@ -28,7 +37,7 @@ namespace ctripRedisHelp
             return redis.GetSubscriber();
         }
 
-        public static helpBase init(string ip, int port,TimeSpan ts)
+        public static helpBase init(string ip, int port, TimeSpan ts)
         {
             return new helpBase(ip, port, ts);
         }
@@ -51,7 +60,7 @@ namespace ctripRedisHelp
             redis = ConnectionMultiplexer.Connect(ipPort);
         }
 
-        private helpBase(string ip,int port,TimeSpan ts)
+        private helpBase(string ip, int port, TimeSpan ts)
         {
             ConfigurationOptions config = new ConfigurationOptions
             {
@@ -73,7 +82,7 @@ namespace ctripRedisHelp
             return flag;
         }
 
-        public bool setnx(string key,string value,TimeSpan ts)
+        public bool setnx(string key, string value, TimeSpan ts)
         {
             var db = redis.GetDatabase();
             var flag = db.StringSet(key, value, expiry: ts, when: When.NotExists);
@@ -98,12 +107,12 @@ namespace ctripRedisHelp
             return t;
         }
 
-        public long publishAndSet(string publishItem,string value)
+        public long publishAndSet(string publishItem, string value)
         {
             this.pubValue = value;
-            
-            var setFlag = redis.GetDatabase().StringSet(publishItem, value, expiry:expiryTime, flags: CommandFlags.FireAndForget);
-            var rClientNum = redis.GetDatabase().Publish(publishItem,value);
+
+            var setFlag = redis.GetDatabase().StringSet(publishItem, value, expiry: expiryTime, flags: CommandFlags.FireAndForget);
+            var rClientNum = redis.GetDatabase().Publish(publishItem, value);
             return rClientNum;
         }
 
@@ -113,9 +122,17 @@ namespace ctripRedisHelp
             return rClientNum;
         }
 
-        public void subscriber(string SubscribeItem,Action<RedisChannel,RedisValue> act)
+        public void subscriber(string SubscribeItem)
         {
-            redis.GetSubscriber().Subscribe(SubscribeItem, act);
+            redis.GetSubscriber().Subscribe(SubscribeItem,(channel, message) =>
+                {
+                    this.valueProcessor(message);
+                });
+        }
+
+        public void unSubscriber(string SubscribeItem)
+        {
+            redis.GetSubscriber().Unsubscribe(SubscribeItem);
         }
 
         private string subscribeSelfFilter(string SubscribeItem, int timeOut)
@@ -161,6 +178,30 @@ namespace ctripRedisHelp
         {
             //redis.Close();
             redis.Dispose();
+        }
+
+
+        public event EventHandler<onValueEventArgs> onValueArrive;
+        public void valueProcessor(string value)
+        {
+            // Do something here before the event…
+            this.inValue = value;
+            onValueArrived(new onValueEventArgs { Value = value });
+            autoEvent.Set();
+
+            // or do something here after the event. 
+        }
+        protected virtual void onValueArrived(onValueEventArgs e)
+        {
+            if (onValueArrive != null)
+            {
+                onValueArrive(this, e);
+            }
+        }
+
+        public bool Wait(int timeOut)
+        {
+            return this.autoEvent.WaitOne(timeOut);
         }
     }
 }

@@ -9,33 +9,27 @@ namespace inTimePaymentForService
 {
     public static class serviceHelp
     {
-        public static string inTimePaymentMethodHelp(this helpBase help, string reqId, int timeout, Func<bool> act)
+        public static string inTimePaymentMethodHelp(this IhelpBase help, string reqId, int timeout, Func<bool> act)
         {
-            AutoResetEvent autoEvent = new AutoResetEvent(false);
-            var sub = help.getSubscriber();
             Console.WriteLine("client is waitting");
             var res = string.Empty;
 
-            sub.SubscribeAsync(reqId, (channel, message) =>
-            {
-                Console.WriteLine(message);
-                res = message.ToString();
-                autoEvent.Set();
-            });
+            help.subscriber(reqId);
 
             var flag = act();
             if (flag)
-            {
-                autoEvent.WaitOne(timeout);
+            {                
+                help.Wait(timeout);
                 Console.WriteLine("timeout");
+                res = help.InValue;
             }
             else
             {
 
             }
 
-            sub.Unsubscribe(reqId);
-
+            help.unSubscriber(reqId);
+            //res = help.InValue;
             return res;
         }
     }

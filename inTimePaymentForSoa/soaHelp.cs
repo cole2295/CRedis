@@ -9,7 +9,7 @@ namespace inTimePaymentForSoa
     public static class soaHelp
     {
 
-        public static payMethod inTimePaymentResultHelp(this helpBase help,string reqId, string payResult, payMethod syncOrNot)
+        public static payMethod inTimePaymentResultHelp(this IhelpBase help,string reqId, string payResult, payMethod syncOrNot)
         {
             var subNum = help.publish(reqId, payResult);
 

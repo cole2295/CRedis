@@ -43,7 +43,7 @@ namespace inTimePayment.Controllers
         }
     }
     [RoutePrefix("api/bank")]
-    public class bankController : ApiController
+    public class bankController : ApiController, inTimePayment.Controllers.IbankController
     {
         [Route("processPaymentHelpForTest")]
         [HttpPost]
