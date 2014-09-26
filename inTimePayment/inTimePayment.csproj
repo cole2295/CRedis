@@ -222,9 +222,7 @@
     <Compile Include="Controllers\bankController.cs" />
     <Compile Include="Controllers\controllerData.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\IbankController.cs" />
     <Compile Include="Controllers\inTimePayControllerHelpController.cs" />
-    <Compile Include="Controllers\IpaySOAController.cs" />
     <Compile Include="Controllers\paySOAController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

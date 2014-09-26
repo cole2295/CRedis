@@ -19,56 +19,22 @@ namespace inTimePayment.Controllers
             var port = 6379;
 
             var res = string.Empty;
-            using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
+            var billRes = req(method, processTime, result);
+
+            if (!string.IsNullOrEmpty(billRes.BillNo))
             {
-                res = help.inTimePaymentMethodHelp(reqId, waitTime, () =>
+                using (var help = helpBase.init(ip, port, new TimeSpan(0, 5, 0)))
                 {
-                    var billRes = req(method, processTime, result);
-                    //using (var req = new PaymentServiceClient())
-                    //{
-                    //    billRes = req.createBillHelp(new inTimeReqPara { ReqId = reqId });
-                    //}
-
-                    bool flag = false;
-                    if (string.IsNullOrEmpty(billRes.BillNo))
-                    {
-                        flag = false;
-                    }
-                    else
-                    {
-                        flag = true;
-                        #region read paymentResult in cache
-                        //repeated payment req
-                        //if (string.IsNullOrEmpty(redisValueTmp))
-                        //{
-                        //    //async
-                        //}
-                        //else
-                        //{
-                        //    var payInfoTmp = redisValueTmp.FromJson<Dictionary<string, string>>();
-                        //    var method = payInfoTmp["payMethod"];
-                        //    var result = payInfoTmp["result"];
-
-                        //    if (payMethod.sync.Equals(result))
-                        //    {
-                        //        //sync
-                        //    }
-                        //    else
-                        //    {
-
-                        //    }
-                        //}
-                        #endregion
-                    }
-
-                    return flag;
-                });
-
-                //var payInfoTmp = res.FromJson<Dictionary<string, string>>();
-                //var method = payInfoTmp["payMethod"];
-                //var result = payInfoTmp["result"];
-                return res.FromJson<inTimeRes>();
+                    res = help.inTimePaymentMethodHelpWithSetnx(reqId, waitTime);
+                }
             }
+            else
+            {
+                
+            }
+            
+            return res.FromJson<inTimeRes>();
+            
         }
     }
 

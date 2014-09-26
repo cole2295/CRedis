@@ -19,15 +19,15 @@ namespace inTimePaymentForSoa.Tests
             var pubValue = "inTimePaymentResultHelpTestPub";
             var method = payMethod.sync;
             var mockHelp = new Mock<IhelpBase>();
-            mockHelp.Setup(pub => pub.publish(pubKey, pubValue)).Returns(1);
+            mockHelp.Setup(set => set.setnx(pubKey, pubValue, new TimeSpan(0,1,0))).Returns(true);
 
             var helpPara = mockHelp.Object;
-            var res = helpPara.inTimePaymentResultHelp(pubKey, pubValue, method);
+            var res = helpPara.inTimePaymentResultHelpWithSetnx(pubKey, pubValue, method);
 
             Assert.AreEqual(res, method);
-            mockHelp.Setup(pub => pub.publish(pubKey, pubValue)).Returns(0);
+            mockHelp.Setup(set => set.setnx(pubKey, pubValue, new TimeSpan(0, 1, 0))).Returns(false);
             helpPara = mockHelp.Object;
-            res = helpPara.inTimePaymentResultHelp(pubKey, pubValue, method);
+            res = helpPara.inTimePaymentResultHelpWithSetnx(pubKey, pubValue, method);
             Assert.AreNotEqual(res, method);
         }
     }

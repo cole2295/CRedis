@@ -34,6 +34,8 @@ namespace ctripRedisHelp.Tests
             {
                 testHelp.Dispose();
             }
+
+            Assert.IsFalse(testHelp.IsConnected);
         }
 
         [TestMethod()]
@@ -109,6 +111,7 @@ namespace ctripRedisHelp.Tests
             Assert.IsTrue(flag);
             var resItem = help.get(testKey);
             Assert.AreEqual(resItem, testItem);
+            help.set(testKey, testItem, new TimeSpan(0,0,0,0,1));
         }
 
         [TestMethod()]

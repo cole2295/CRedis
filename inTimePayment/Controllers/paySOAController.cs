@@ -42,7 +42,7 @@ namespace inTimePayment.Controllers
     }
 
     [RoutePrefix("api/paySOA")]
-    public class paySOAController : ApiController, inTimePayment.Controllers.IpaySOAController
+    public class paySOAController : ApiController
     {
         [Route("createBillHelpForTest")]
         [HttpPost]
@@ -121,7 +121,7 @@ namespace inTimePayment.Controllers
 
                 var pubItem = resToPub.ToJson();
 
-                var res = help.inTimePaymentResultHelp(subItem, pubItem, method);
+                var res = help.inTimePaymentResultHelpWithSetnx(subItem, pubItem, method);
 
                 //return res;
 
