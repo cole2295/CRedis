@@ -39,23 +39,24 @@ namespace inTimePaymentForService
             var res = string.Empty;
 
             help.subscriber(billNo);
-            help.InValue = help.get(billNo);
+            res = help.get(billNo);
 
             var ts = new TimeSpan(0,0,0,0,1);
 
-            var wait = string.IsNullOrEmpty(help.InValue) ? timeout : 0;
-            
-            help.Wait(wait);
+            var resGetStatus = string.IsNullOrEmpty(res) ? help.Wait(timeout) : false;
 
-            bool flag = help.setnx(billNo, payMethod.async.ToString(), new TimeSpan(0, resultExpiry, 0));
-            res = help.InValue;
+            res = resGetStatus ? help.InValue : res;
+            var resSubStatus = string.IsNullOrEmpty(res);
+            bool flag = resSubStatus ?
+                help.setnx(billNo, payMethod.async.ToString(), new TimeSpan(0, resultExpiry, 0)) : 
+                false;
             if (flag)
             {
                 ts = new TimeSpan(0, 1, 0); 
             }
             else
             {
-                res = string.IsNullOrEmpty(res) ? help.get(billNo) : res;
+                res = resSubStatus ? help.get(billNo) : res;
             }
 
             help.set(billNo, res, ts);
