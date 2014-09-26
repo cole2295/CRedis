@@ -11,7 +11,7 @@ namespace ctripRedisHelp
         async
     }
 
-    public class helpBase : IDisposable, ctripRedisHelp.IhelpBase
+    public sealed class helpBase : IDisposable, ctripRedisHelp.IhelpBase
     {
         static ConnectionMultiplexer redis;// = ConnectionMultiplexer.Connect("172.16.144.70");
         private string pubValue = string.Empty;
@@ -176,8 +176,16 @@ namespace ctripRedisHelp
 
         public void Dispose()
         {
+            autoEvent.Close();
             //redis.Close();
             redis.Dispose();
+            // This object will be cleaned up by the Dispose method.
+            // Therefore, you should call GC.SupressFinalize to
+            // take this object off the finalization queue
+            // and prevent finalization code for this object
+            // from executing a second time.
+            GC.SuppressFinalize(this);
+
         }
 
 
@@ -191,7 +199,7 @@ namespace ctripRedisHelp
 
             // or do something here after the event. 
         }
-        protected virtual void onValueArrived(onValueEventArgs e)
+        private void onValueArrived(onValueEventArgs e)
         {
             if (onValueArrive != null)
             {
